@@ -35,23 +35,26 @@ func main() {
 
 	rootCmd.PersistentFlags().BoolVar(&sandbox, "sandbox", false, "Use the sandbox environment")
 
-	if sandbox {
-		fmt.Println("Using sandbox environment")
-		baseUrl = devBaseUrl
-	}
+	getClient := func() *asaas.AsaasWebhookClient {
+		if sandbox {
+			fmt.Println("Using sandbox environment")
+			baseUrl = devBaseUrl
+		}
 
-	clientConfig := asaas.ClientConfig{
-		BaseURL:    devBaseUrl,
-		HTTPClient: httpClient,
-		APIKey:     apikey,
-	}
+		clientConfig := asaas.ClientConfig{
+			BaseURL:    baseUrl,
+			HTTPClient: httpClient,
+			APIKey:     apikey,
+		}
 
-	assasClient := asaas.NewAsaasWebhookClient(clientConfig)
+		return asaas.NewAsaasWebhookClient(clientConfig)
+	}
 
 	listCommand := &cobra.Command{
 		Use:   "list",
 		Short: "List all webhooks",
 		Run: func(cmd *cobra.Command, args []string) {
+			assasClient := getClient()
 			webhooks, err := assasClient.ListWebhooks()
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error listing webhooks: %v\n", err)
@@ -69,6 +72,7 @@ func main() {
 		Short: "Update the URL of a webhook",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			assasClient := getClient()
 			webhookID := args[0]
 			webhook, err := assasClient.UpdateWebhookURL(webhookID, newUrl)
 			if err != nil {
@@ -85,6 +89,7 @@ func main() {
 		Short: "Enable or disable a webhook sync queue",
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
+			assasClient := getClient()
 			webhookID := args[0]
 			enabled := args[1] == "true"
 			webhook, err := assasClient.ToggleWebhookSync(webhookID, enabled)
