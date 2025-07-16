@@ -196,8 +196,9 @@ Use 'asaascli <command> --help' for more information about a command.`,
 				fmt.Fprintf(os.Stderr, "Error toggling webhook: %v\n", err)
 				os.Exit(1)
 			}
+
 			status := "disabled"
-			if webhook.Enabled {
+			if enabled {
 				status = "enabled"
 			}
 
