@@ -1,4 +1,4 @@
-APP_NAME := asaas-cli
+APP_NAME := asaascli
 
 MAIN_PACKAGE := ./cmd/main.go
 

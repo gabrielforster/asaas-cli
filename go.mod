@@ -1,4 +1,4 @@
-module github.com/gabrielforster/asaas-cli
+module github.com/gabrielforster/asaascli
 
 go 1.24.0
 
